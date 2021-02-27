@@ -1,8 +1,11 @@
+using Core.Aspect.Autofac.Validation;
 using Core.Utilities.Results;
 using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
 using DataAccess.Abstract;
-using Entities.Concrete;
+using Entites.Concrete;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +19,8 @@ namespace Business.Concrete
 		{
 			_brandDal = brandDal;
 		}
-		
+
+		[ValidationAspect(typeof(BrandValidator))]
 		public IResult Add(Brand brand)
 		{
 			_brandDal.Add(brand);
@@ -39,6 +43,7 @@ namespace Business.Concrete
 			return new SuccessDataResult<Brand>(_brandDal.Get(b => b.Id == id));
 		}
 		
+		[ValidationAspect(typeof(BrandValidator))]
 		public IResult Update(Brand brand)
 		{
 			_brandDal.Update(brand);
