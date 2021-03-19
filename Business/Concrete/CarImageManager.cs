@@ -1,9 +1,12 @@
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
-using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
+using Core.Aspects.Autofac.Performance;
+using Core.Aspects.Autofac.Transaction;
+using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -29,6 +32,8 @@ namespace Business.Concrete
 
 		[SecuredOperation("carImage.add,admin")]
 		[ValidationAspect(typeof(CarImageValidator))]
+		[CacheRemoveAspect("ICarImageService.Get")]
+		[TransactionScopeAspect]
 		public IResult Add(CarImage carImage)
 		{
 			IResult result = BusinessRules.Run(CheckIfCarImageLimitExceded(carImage.CarId));
@@ -41,12 +46,16 @@ namespace Business.Concrete
 		}
 		
 		[SecuredOperation("carImage.delete,admin")]
+		[CacheRemoveAspect("ICarImageService.Get")]
+		[TransactionScopeAspect]
 		public IResult Delete(CarImage carImage)
 		{
 			_carImageDal.Delete(carImage);
 			return new SuccessResult(Messages.DeletedItem);
 		}
 		
+		[CacheAspect]
+		[PerformanceAspect(5)]
 		public IDataResult<List<CarImage>> GetAll()
 		{
 			return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll);
@@ -59,6 +68,8 @@ namespace Business.Concrete
 		
 		[SecuredOperation("carImage.update,admin")]
 		[ValidationAspect(typeof(CarImageValidator))]
+		[CacheRemoveAspect("ICarImageService.Get")]
+		[TransactionScopeAspect]
 		public IResult Update(CarImage carImage)
 		{
 			IResult result = BusinessRules.Run(CheckIfCarImageLimitExceded(carImage.CarId));

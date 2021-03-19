@@ -1,9 +1,11 @@
 using Business.Abstract;
 using Business.BusinessAspects.Autofac;
-using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
+using Core.Aspects.Autofac.Performance;
+using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
@@ -29,6 +31,7 @@ namespace Business.Concrete
 		
 		[SecuredOperation("car.add,admin")]
 		[ValidationAspect(typeof(CarValidator))]
+		[CacheRemoveAspect("ICarService.Get")]
 		public IResult Add(Car car)
 		{
 			_carDal.Add(car);
@@ -36,12 +39,15 @@ namespace Business.Concrete
 		}
 		
 		[SecuredOperation("car.delete,admin")]
+		[CacheRemoveAspect("ICarService.Get")]
 		public IResult Delete(Car car)
 		{
 			_carDal.Delete(car);
 			return new SuccessResult(Messages.DeletedItem);
 		}
 		
+		[CacheAspect]
+		[PerformanceAspect(5)]
 		public IDataResult<List<Car>> GetAll()
 		{
 			if(DateTime.Now.Hour == 22)
@@ -59,22 +65,26 @@ namespace Business.Concrete
 		
 		[SecuredOperation("car.update,admin")]
 		[ValidationAspect(typeof(CarValidator))]
+		[CacheRemoveAspect("ICarService.Get")]
 		public IResult Update(Car car)
 		{
 			_carDal.Update(car);
 			return new SuccessResult(Messages.UpdatedItem);
 		}
 		
+		[CacheAspect]
 		public IDataResult<List<Car>> GetCarsByBrandId(int brandId)
 		{
 			return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.BrandId == brandId), Messages.DataListed);
 		}
 		
+		[CacheAspect]
 		public IDataResult<List<Car>> GetCarsByColorId(int colorId)
 		{
 			return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.ColorId == colorId));
 		}
 		
+		[CacheAspect]
 		public IDataResult<List<CarDetailDto>> GetCarDetails()
 		{			
 			return new SuccessDataResult<List<Car>>(_carDal.GetCarDetails());
