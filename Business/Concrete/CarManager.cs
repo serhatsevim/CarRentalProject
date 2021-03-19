@@ -1,14 +1,20 @@
-using Core.Aspect.Autofac.Validation;
-using Core.Utilities.Results;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Business;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entites.Concrete;
-using Entites.DTOs;
+using DataAccess.Concrete.InMemory;
+using Entities.Concrete;
+using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -21,6 +27,7 @@ namespace Business.Concrete
 			_carDal = carDal;
 		}
 		
+		[SecuredOperation("car.add,admin")]
 		[ValidationAspect(typeof(CarValidator))]
 		public IResult Add(Car car)
 		{
@@ -28,6 +35,7 @@ namespace Business.Concrete
 			return new SuccessResult(Messages.AddedItem);			
 		}
 		
+		[SecuredOperation("car.delete,admin")]
 		public IResult Delete(Car car)
 		{
 			_carDal.Delete(car);
@@ -48,7 +56,8 @@ namespace Business.Concrete
 		{
 			return new SuccessDataResult<Car>(_carDal.Get(c => c.Id == id));
 		}
-
+		
+		[SecuredOperation("car.update,admin")]
 		[ValidationAspect(typeof(CarValidator))]
 		public IResult Update(Car car)
 		{

@@ -33,6 +33,9 @@ namespace Business.DependencyResolvers.Autofac
 			
 			builder.RegisterType<RentalManager>().As<IRentalService>().SingleInstance();
 			builder.RegisterType<EfRentalDal>().As<IRentalDal>().SingleInstance();
+
+            builder.RegisterType<AuthManager>().As<IAuthService>();
+            builder.RegisterType<JwtHelper>().As<ITokenHelper>();
 			
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

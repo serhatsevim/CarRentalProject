@@ -1,13 +1,20 @@
-using Core.Aspect.Autofac.Validation;
-using Core.Utilities.Results;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
+using Core.Utilities.Business;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entites.Concrete;
+using DataAccess.Concrete.InMemory;
+using Entities.Concrete;
+using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -20,6 +27,7 @@ namespace Business.Concrete
 			_brandDal = brandDal;
 		}
 
+		[SecuredOperation("brand.add,admin")]
 		[ValidationAspect(typeof(BrandValidator))]
 		public IResult Add(Brand brand)
 		{
@@ -27,6 +35,7 @@ namespace Business.Concrete
 			return new SuccessResult(Message.AddedItem);
 		}
 		
+		[SecuredOperation("brand.delete,admin")]
 		public IResult Delete(Brand brand)
 		{
 			_brandDal.Delete(brand);
@@ -43,6 +52,7 @@ namespace Business.Concrete
 			return new SuccessDataResult<Brand>(_brandDal.Get(b => b.Id == id));
 		}
 		
+		[SecuredOperation("brand.update,admin")]
 		[ValidationAspect(typeof(BrandValidator))]
 		public IResult Update(Brand brand)
 		{

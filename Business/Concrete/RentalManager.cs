@@ -1,15 +1,20 @@
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
-using Core.Aspect.Autofac.Validation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entites.Concrete;
-using Entites.DTOs;
+using DataAccess.Concrete.InMemory;
+using Entities.Concrete;
+using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -21,7 +26,8 @@ namespace Business.Concrete
 		{
 			_rentalDal = rentalDal;
 		}
-
+		
+		[SecuredOperation("rental.add,admin")]
 		[ValidationAspect(typeof(RentalValidator))]
 		public IResult Add(Rental rental)
 		{
@@ -36,6 +42,7 @@ namespace Business.Concrete
 			return new SuccessResult(Message.AddedItem);
 		}
 		
+		[SecuredOperation("rental.delete,admin")]
 		public IResult Delete(Rental rental)
 		{
 			_rentalDal.Delete(rental);
@@ -52,6 +59,7 @@ namespace Business.Concrete
 			return new SuccessDataResult<Rental>(_rentalDal.Get(r => r.Id == id);
 		}
 		
+		[SecuredOperation("rental.update,admin")]
 		[ValidationAspect(typeof(RentalValidator))]
 		public IResult Update(Rental rental)
 		{

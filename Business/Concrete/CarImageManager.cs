@@ -1,14 +1,20 @@
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
+using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
-using Core.Aspect.Autofac.Validation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using Entites.Concrete;
+using DataAccess.Concrete.InMemory;
+using Entities.Concrete;
+using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -20,7 +26,8 @@ namespace Business.Concrete
 		{
 			_carImageDal = carImageDal;
 		}
-		
+
+		[SecuredOperation("carImage.add,admin")]
 		[ValidationAspect(typeof(CarImageValidator))]
 		public IResult Add(CarImage carImage)
 		{
@@ -33,6 +40,7 @@ namespace Business.Concrete
 			return new SuccessResult(Messages.AddedItem);
 		}
 		
+		[SecuredOperation("carImage.delete,admin")]
 		public IResult Delete(CarImage carImage)
 		{
 			_carImageDal.Delete(carImage);
@@ -49,6 +57,7 @@ namespace Business.Concrete
 			return new SuccessDataResult<CarImage>(_carImageDal.Get(c => c.Id == id));
 		}
 		
+		[SecuredOperation("carImage.update,admin")]
 		[ValidationAspect(typeof(CarImageValidator))]
 		public IResult Update(CarImage carImage)
 		{
