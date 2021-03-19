@@ -15,5 +15,8 @@ namespace Business.Constants
 		public static string DataListed = "Kayıt listelendi.";
 		public static string DataListedError = "Kayıt listelenemedi.";
 		public static string MaintenanceTime = "Sisteme bakım yapılıyor.";		
+		public static string CarIsRentalError = "Bu araç kiralanmış.";		
+		public static string CarImageLimitExcededError = "Bir araba  için en fazla 5 resim ekleyebilirsiniz.";		
+		
 	}
 }
