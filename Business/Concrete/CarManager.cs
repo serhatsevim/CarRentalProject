@@ -89,5 +89,11 @@ namespace Business.Concrete
 		{			
 			return new SuccessDataResult<List<Car>>(_carDal.GetCarDetails());
 		}
+		
+		[CacheAspect]
+		public IDataResult<CarDetailDto> GetCarDetailsByCarId(int carId)
+		{			
+			return new SuccessDataResult<List<Car>>(_carDal.GetCarDetailsByCarId(carId));
+		}		
 	}
 }
